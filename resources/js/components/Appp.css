@@ -1,0 +1,18 @@
+html, body {
+    position: relative;
+    background: lemonchiffon;
+}
+
+.content {
+    background: purple;
+    padding-top: 106px;
+    padding-left: 32px;
+    background: lemonchiffon;
+   /* width: 100%;*/
+}
+
+@media(max-width:768px) {
+    .content {
+        padding-left: 0;
+    }
+}
