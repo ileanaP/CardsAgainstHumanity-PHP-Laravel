@@ -22,3 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  * Games
  */
 Route::resource('games', 'Game\GameController', ['only' => ['index']]);
+
+Route::post('register', 'UserController@register');
+Route::post('login', 'UserController@login');
+
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::post('details', 'UserController@details');
+});
