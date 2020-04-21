@@ -19,7 +19,7 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->bigInteger('password');
+            $table->string('password');
             $table->bigInteger('creator_id')->unsigned();
             $table->bigInteger('winner_id')->unsigned()->nullable();
             $table->timestamps();
