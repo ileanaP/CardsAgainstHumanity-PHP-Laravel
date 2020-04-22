@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
         User::truncate();
-        /*Game::truncate();
-        Card::truncate();
+        Game::truncate();
+/*        Card::truncate();
         Cardset::truncate();
         Round::truncate();
         DB::table('game_user')->truncate();
@@ -29,8 +29,10 @@ class DatabaseSeeder extends Seeder
         DB::table('game_cardset')->truncate();
 */
         $usrQtty = 1000;
-
+        $gmsQtty = 20;
+        
         factory(User::class, $usrQtty)->create();
+        factory(Game::class, $gmsQtty)->create();
 
   /*      $filename=storage_path("dbseeder.json");
         

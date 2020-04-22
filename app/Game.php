@@ -17,4 +17,14 @@ class Game extends Model
     {
         return $this->belongsToMany(Cardset::class);
     }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function winner()
+    {
+        return $this->belongsTo(User::class, 'winner_id');
+    }
 }

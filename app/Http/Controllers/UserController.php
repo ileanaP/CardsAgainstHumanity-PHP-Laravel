@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request; 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\ApiController; 
 use App\User; 
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash;
 use Validator;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     private $successStatus = 200;
 
@@ -33,10 +33,9 @@ class UserController extends Controller
             'api_token' => str_random(80)
         ]);
         
-        $success['token'] =  $user->createToken('MyApp')->accessToken; 
-        $success['name'] =  $user->name;
+        $user->token =  $user->createToken('MyApp')->accessToken; 
 
-        return response()->json(['success'=>$success], $this->successStatus); 
+        return $this->showOne($user, $this->successStatus); 
     }
 
     /** 
@@ -49,10 +48,10 @@ class UserController extends Controller
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
-            return response()->json(['success' => $success], $this->successStatus); 
+            return $this->showOne($user, $this->successStatus); 
         } 
-        else{ 
-            return response()->json(['error'=>'Unauthorised'.(request('email').'-'.request('password'))], 401); 
+        else { 
+            return $this->errorResponse('Unauthorised', 401); 
         }
     }
 

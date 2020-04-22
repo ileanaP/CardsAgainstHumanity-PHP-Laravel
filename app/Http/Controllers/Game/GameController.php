@@ -10,7 +10,7 @@ class GameController extends ApiController
 {
     public function index()
     {
-        $games = Game::all();
+        $games = Game::with('creator', 'winner')->get();
         return $this->showAll($games);
     }
 }
