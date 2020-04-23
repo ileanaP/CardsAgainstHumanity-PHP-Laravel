@@ -21,20 +21,20 @@ class DatabaseSeeder extends Seeder
 
         User::truncate();
         Game::truncate();
-/*        Card::truncate();
+        Card::truncate();
         Cardset::truncate();
         Round::truncate();
         DB::table('game_user')->truncate();
         DB::table('card_cardset')->truncate();
         DB::table('game_cardset')->truncate();
-*/
+
         $usrQtty = 1000;
         $gmsQtty = 20;
         
-        factory(User::class, $usrQtty)->create();
-        factory(Game::class, $gmsQtty)->create();
+        $users = factory(User::class, $usrQtty)->create();
+        $games = factory(Game::class, $gmsQtty)->create();
 
-  /*      $filename=storage_path("dbseeder.json");
+        $filename=storage_path("dbseeder.json");
         
         $content = json_decode(file($filename)[0]);
 
@@ -67,7 +67,5 @@ class DatabaseSeeder extends Seeder
             Cardset::find($el[0])->cards()->attach($el[1]);
         
         });
-*/
-
     }
 }

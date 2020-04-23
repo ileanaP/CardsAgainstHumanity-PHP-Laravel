@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 /**
  * Games
  */
-Route::resource('games', 'Game\GameController', ['only' => ['index']]);
+Route::resource('games', 'Game\GameController', ['only' => ['index', 'show']]);
 
 Route::post('register', 'UserController@register');
 Route::post('login', 'UserController@login');

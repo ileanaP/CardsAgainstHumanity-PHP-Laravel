@@ -13,4 +13,9 @@ class GameController extends ApiController
         $games = Game::with('creator', 'winner')->get();
         return $this->showAll($games);
     }
+
+    public function show(Game $game)
+    {
+        return $this->showOne($game);
+    }
 }
