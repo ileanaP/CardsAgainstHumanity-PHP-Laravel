@@ -25,7 +25,7 @@ $factory->define(User::class, function (Faker $faker) {
         'verified' => $verified = $faker->randomElement([User::VERIFIED, User::UNVERIFIED]),
         'verification_token' => $verified == User::VERIFIED ? null : User::generateVerificationCode(),
         'password' => bcrypt('secret'), // password,
-        'in_game' => User::NOT_INGAME,
+        'in_game' => null,
         'remember_token' => Str::random(10),
     ];
 });

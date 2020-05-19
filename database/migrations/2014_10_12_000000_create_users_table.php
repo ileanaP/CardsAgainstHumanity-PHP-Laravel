@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('verified')->default(User::VERIFIED);
             $table->string('verification_token')->nullable();
             $table->string('password');
-            $table->string('in_game')->default(User::NOT_INGAME);
+            $table->bigInteger('in_game')->unsigned()->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

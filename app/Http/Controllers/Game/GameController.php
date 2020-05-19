@@ -7,6 +7,8 @@ use App\Http\Controllers\ApiController;
 use App\Game;
 use App\Card;
 use App\Round;
+use Illuminate\Support\Facades\DB;
+
 
 class GameController extends ApiController
 {

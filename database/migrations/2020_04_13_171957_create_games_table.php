@@ -28,6 +28,10 @@ class CreateGamesTable extends Migration
             $table->foreign('creator_id')->references('id')->on('users');
             $table->foreign('winner_id')->references('id')->on('users');
         });
+
+        Schema::table('users', function($table) {
+            $table->foreign('in_game')->references('id')->on('games');
+        });
     }
 
     /**
