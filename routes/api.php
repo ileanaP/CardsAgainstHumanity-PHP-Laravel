@@ -28,11 +28,13 @@ Route::resource('games.rounds', 'Game\GameRoundController', ['only' => ['index',
 Route::resource('games.users', 'Game\GameUserController', ['only' => ['index', 'show']]);
 Route::post('games/{gameId}/users/{userId}/remove', 'Game\GameUserController@remove');
 
+Route::resource('users.rounds', 'User\UserRoundController', ['only' => ['index', 'show']]);
+
 Route::get('cards/{cardIds}', 'CardController@showCards');
 
-Route::post('register', 'UserController@register');
-Route::post('login', 'UserController@login');
+Route::post('register', 'User\UserController@register');
+Route::post('login', 'User\UserController@login');
 
 Route::group(['middleware' => 'auth:api'], function() {
-    Route::post('details', 'UserController@details');
+    Route::post('details', 'User\UserController@details');
 });

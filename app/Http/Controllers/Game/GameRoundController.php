@@ -25,44 +25,49 @@ class GameRoundController extends ApiController
 
     public function store(Game $game)
     {
-        if($this->roundInProgress($game->id))
-            return $this->errorResponse('A round is in progress. End round before creating a new one.', 403);
-        
-        $cards = $this->fetchCards($game->id);
+        $round = $this->roundInProgress($game->id);
 
-        $round = $this->saveRound($game->id, $cards['black']);
-
-        $players = $this->getGamePlayers($game->id);
-
-        $playersCount = count($players);
-
-        $playersCards = array();
-
-        for($i=0; $i < $playersCount; $i++)
-            $playersCards[$i] = array();
-
-        $j = 0;
-        foreach($cards['white'] as $card)
+        if(count($round))
         {
-            $playersCards[$j][] = $card;
-            $j++;
-            $j %= $playersCount;
+            $round = $round[0];
         }
-
-        $roundCards = array();
-
-        for($i=0; $i < $playersCount; $i++)
+        else
         {
-            $roundCards[$players[$i]] = $playersCards[$i];
-        }
+            $cards = $this->fetchCards($game->id);
+            $round = $this->saveRound($game->id, $cards['black']);
 
-        foreach($roundCards as $player => $cards)
-        {
-            DB::table('user_round')->insert(
-                ['user_id' => $player,
-                 'round_id' => $round->id,
-                 'cards' => json_encode($cards)]
-            );
+            $players = $this->getGamePlayers($game->id);
+
+            $playersCount = count($players);
+
+            $playersCards = array();
+
+            for($i=0; $i < $playersCount; $i++)
+                $playersCards[$i] = array();
+
+            $j = 0;
+            foreach($cards['white'] as $card)
+            {
+                $playersCards[$j][] = $card;
+                $j++;
+                $j %= $playersCount;
+            }
+
+            $roundCards = array();
+
+            for($i=0; $i < $playersCount; $i++)
+            {
+                $roundCards[$players[$i]] = $playersCards[$i];
+            }
+
+            foreach($roundCards as $player => $cards)
+            {
+                DB::table('user_round')->insert(
+                    ['user_id' => $player,
+                    'round_id' => $round->id,
+                    'cards' => json_encode($cards)]
+                );
+            }
         }
 
         return $this->showOne($round);
@@ -70,11 +75,10 @@ class GameRoundController extends ApiController
 
     public function roundInProgress($gameId)
     {
-        $checkRounds = Round::where('game_id', $gameId)
-                        ->where('winner_id', null)
-                        ->select('id', 'game_id', 'winner_id')->get();
+        $round = Round::where('game_id', $gameId)
+                        ->where('winner_id', null)->get();
 
-        return count($checkRounds) > 0 ? true : false;
+        return $round;
     }
 
     public function fetchCards($gameId)
