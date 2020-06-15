@@ -8,6 +8,11 @@ use App\Card;
 
 class CardController extends ApiController
 {
+    public function csrfToken(Request $request)
+    {
+        return $request->session()->get('key');
+    }
+
     public function showCards($cardsId)
     {
         $cards = Card::whereIn('id', json_decode($cardsId))->get();

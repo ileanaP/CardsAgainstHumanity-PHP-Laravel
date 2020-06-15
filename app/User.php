@@ -49,4 +49,9 @@ class User extends Authenticatable
     {
         return str_random(40);
     }
+
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'App.User.' . $this->id;
+    }
 }

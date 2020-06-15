@@ -7,6 +7,8 @@ use App\Http\Controllers\ApiController;
 use App\Game;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use App\Events\PlayerEnter;
+use App\Events\PlayerLeave;
 
 class GameUserController extends ApiController
 {
@@ -21,11 +23,7 @@ class GameUserController extends ApiController
     {
         $users = $game->users()->get();
 
-        if($users->contains($user))
-        {
-            return $this->showOne($user);
-        }
-        else
+        if(!($users->contains($user)))
         {
             if(count($users) >= 6)
             {
@@ -38,12 +36,21 @@ class GameUserController extends ApiController
             }
 
             $user->in_game = $game->id;
+
+            event(new PlayerEnter($user));
+
             $user->save();
             $game->users()->save($user);
-            return $this->showOne($user);
         }
 
-        return $this->errorResponse('This user is not playing in this game.', 403);
+        if($user->in_game != null)
+        {
+            return $this->showOne($user);
+        }
+        else
+        {
+            return $this->errorResponse('This user is not playing in this game.', 403);
+        }
     }
 
     public function remove($game_id, $user_id)
@@ -52,6 +59,9 @@ class GameUserController extends ApiController
         $user = User::find($user_id);
 
         $game->users()->detach($user);
+        
+        event(new PlayerLeave($user));
+
         $user->in_game = null;
         $user->save();
 
