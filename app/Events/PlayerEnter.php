@@ -40,7 +40,8 @@ class PlayerEnter implements ShouldBroadcastNow
     {
         return [
             'id' => $this->user->id,
-            'name'=> $this->user->name
+            'name'=> $this->user->name,
+            'creator' => false
         ];
     }
 }
