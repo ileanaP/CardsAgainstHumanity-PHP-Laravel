@@ -53,10 +53,21 @@ class GameUserController extends ApiController
         }
     }
 
+    public function confirm($game_id, $user_id)
+    {
+        $game = Game::find($game_id);
+        $user = User::find($user_id);
+
+        
+    }
+
     public function remove($game_id, $user_id)
     {
         $game = Game::find($game_id);
         $user = User::find($user_id);
+
+        if($game->creator_id == $user->id)
+            return $this->errorResponse('You cannot leave game without ending it.', 403);
 
         $game->users()->detach($user);
         

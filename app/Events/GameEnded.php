@@ -10,20 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PlayerEnter implements ShouldBroadcastNow
+class GameEnded implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public $game;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($game)
     {
-        $this->user = $user;
+        $this->game = $game;
     }
 
     /**
@@ -33,14 +33,6 @@ class PlayerEnter implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('game.'.$this->user->in_game);
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'id' => $this->user->id,
-            'name'=> $this->user->name
-        ];
+        return new Channel('game.'.$this->game->id);
     }
 }

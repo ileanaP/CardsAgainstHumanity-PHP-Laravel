@@ -22,11 +22,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  * Games
  */
 Route::post('games/enter', 'Game\GameController@enterGame');
-Route::resource('games', 'Game\GameController', ['only' => ['index', 'show']]);
+Route::resource('games', 'Game\GameController', ['only' => ['index', 'show', 'destroy']]);
 
 Route::resource('games.rounds', 'Game\GameRoundController', ['only' => ['index', 'show', 'store']]);
 Route::resource('games.users', 'Game\GameUserController', ['only' => ['index', 'show']]);
 Route::post('games/{gameId}/users/{userId}/remove', 'Game\GameUserController@remove');
+Route::post('games/{gameId}/users/{userId}/confirm', 'Game\GameUserController@confirm');
 
 Route::resource('users.rounds', 'User\UserRoundController', ['only' => ['index', 'show']]);
 
