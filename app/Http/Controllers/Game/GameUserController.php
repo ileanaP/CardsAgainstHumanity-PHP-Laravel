@@ -66,6 +66,9 @@ class GameUserController extends ApiController
         $game = Game::find($game_id);
         $user = User::find($user_id);
 
+        if($game == null || $user == null)
+            return $this->errorResponse('Op forbidden', 403);
+
         if($game->creator_id == $user->id)
             return $this->errorResponse('You cannot leave game without ending it.', 403);
 
