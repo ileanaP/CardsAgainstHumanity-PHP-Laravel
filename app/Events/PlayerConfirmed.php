@@ -10,20 +10,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PlayerEnter implements ShouldBroadcastNow
+class PlayerConfirmed implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public $user_id;
+    public $game_id;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($game_id, $user_id)
     {
-        $this->user = $user;
+        $this->game_id = $game_id;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -33,15 +35,13 @@ class PlayerEnter implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('game.'.$this->user->in_game);
+        return new Channel('game.'.$this->game_id);
     }
 
     public function broadcastWith()
     {
         return [
-            'id' => $this->user->id,
-            'name'=> $this->user->name,
-            'confirmed' => $this->user->confirmed
+            'id' => $this->user_id
         ];
     }
 }

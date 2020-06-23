@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Events\PlayerEnter;
 use App\Events\PlayerLeave;
+use App\Events\PlayerConfirmed;
 
 class GameUserController extends ApiController
 {
@@ -16,6 +17,15 @@ class GameUserController extends ApiController
     {
 
         $users = $game->users()->get();
+        
+        $users = $users->map(function($stuff){
+            $stuff->confirmed = DB::table('game_user')
+                                    ->where('user_id', $stuff->id)->get()
+                                    ->pluck('confirmed')[0];
+
+            return $stuff;
+        });
+
         return $this->showAll($users);
     }
 
@@ -37,14 +47,20 @@ class GameUserController extends ApiController
 
             $user->in_game = $game->id;
 
-            event(new PlayerEnter($user));
-
             $user->save();
             $game->users()->save($user);
+
+            $user->confirmed = DB::table('game_user')->where('user_id', $user->id)->get()
+                                    ->pluck('confirmed')[0];
+
+            event(new PlayerEnter($user));
         }
 
         if($user->in_game != null)
         {
+            $user->confirmed = DB::table('game_user')->where('user_id', $user->id)->get()
+                                    ->pluck('confirmed')[0];
+            
             return $this->showOne($user);
         }
         else
@@ -55,10 +71,14 @@ class GameUserController extends ApiController
 
     public function confirm($game_id, $user_id)
     {
-        $game = Game::find($game_id);
-        $user = User::find($user_id);
+        DB::table('game_user')
+            ->where('game_id', intval($game_id))
+            ->where('user_id', intval($user_id))
+            ->update(['confirmed' => 1]);
 
-        
+        event(new PlayerConfirmed($game_id, $user_id));
+
+        return;
     }
 
     public function remove($game_id, $user_id)

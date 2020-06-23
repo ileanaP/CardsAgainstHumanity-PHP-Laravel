@@ -39,8 +39,7 @@ class PlayerLeave implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'name'=> $this->user->name,
-            'email' => $this->user->email
+            'id'=> $this->user->id
         ];
     }
 }
