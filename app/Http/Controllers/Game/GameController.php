@@ -54,4 +54,9 @@ class GameController extends ApiController
 
         return $this->showOne($game);
     }
+
+    public function test()
+    {
+        return "testy test";
+    }
 }

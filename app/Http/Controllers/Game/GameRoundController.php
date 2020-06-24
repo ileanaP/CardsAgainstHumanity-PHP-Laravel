@@ -34,6 +34,12 @@ class GameRoundController extends ApiController
         else
         {
             $cards = $this->fetchCards($game->id);
+
+            $cardss = DB::table('cardsets')->get()->pluck('id');
+
+
+            return $cardss;
+
             $round = $this->saveRound($game->id, $cards['black']);
 
             $players = $this->getGamePlayers($game->id);

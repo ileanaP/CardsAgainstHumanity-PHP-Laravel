@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Game;
 use App\User;
+use App\Http\Controllers\Game\GameController;
 use Illuminate\Support\Facades\DB;
 use App\Events\PlayerEnter;
 use App\Events\PlayerLeave;
@@ -87,17 +88,30 @@ class GameUserController extends ApiController
         $user = User::find($user_id);
 
         if($game == null || $user == null)
-            return $this->errorResponse('Op forbidden', 403);
+            return $this->errorResponse('Data not found', 404);
 
         if($game->creator_id == $user->id)
-            return $this->errorResponse('You cannot leave game without ending it.', 403);
-
-        $game->users()->detach($user);
+        {
+            
+            if(count($game->users()->get()) == 1)
+            {
+                $gameCtrl = new GameController;
+                $gameCtrl->destroy($game);
+            }
+            else
+            {
+                return $this->errorResponse('You cannot leave game without ending it.', 403);
+            }
+        }
+        else
+        {
+            $game->users()->detach($user);
         
-        event(new PlayerLeave($user));
+            event(new PlayerLeave($user));
 
-        $user->in_game = null;
-        $user->save();
+            $user->in_game = null;
+            $user->save();
+        }
 
         return $user;
     }
