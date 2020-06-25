@@ -9,6 +9,7 @@ use App\Card;
 use App\Round;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Events\GameEnded;
 
 
@@ -18,6 +19,25 @@ class GameController extends ApiController
     {
         $games = Game::with('creator', 'winner')->get();
         return $this->showAll($games);
+    }
+
+    public function store(Request $request)
+    {
+
+        $rules = [
+            'name' => 'required',
+            'password' => 'required',
+            'creator_id' => 'required',
+            'cardsets' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $request['password'] = Hash::make($request['password']);
+
+        $game = Game::create($request->all());
+
+        return $game;
     }
 
     public function show(Game $game)
@@ -44,8 +64,6 @@ class GameController extends ApiController
         $rounds = Round::where('game_id', $game->id)->get()->pluck('id');
 
         DB::table('user_round')->whereIn('round_id', $rounds)->delete();
-
-        DB::table('game_cardset')->where('game_id', $game->id)->delete();
 
         Round::where('game_id', $game->id)->delete();
         $game->delete();

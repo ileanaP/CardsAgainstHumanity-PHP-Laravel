@@ -8,14 +8,13 @@ use App\Cardset;
 
 class Game extends Model
 {
+    protected $fillable = [
+        'creator_id', 'name', 'password', 'cardsets'
+    ];
+
     public function users() 
     {
         return $this->belongsToMany(User::class);
-    }
-
-    public function cardsets() 
-    {
-        return $this->belongsToMany(Cardset::class);
     }
 
     public function creator()

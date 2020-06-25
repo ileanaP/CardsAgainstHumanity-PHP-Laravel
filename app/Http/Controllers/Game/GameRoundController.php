@@ -89,12 +89,10 @@ class GameRoundController extends ApiController
 
     public function fetchCards($gameId)
     {
-        $cardsets = DB::table('game_cardset')
-        ->select('cardset_id')->where('game_id', '=', $gameId)->get()
-        ->pluck('cardset_id');
+        $cardsets = Game::find($gameId)->cardsets;
 
         $cards = DB::table('card_cardset')
-            ->select('card_id')->whereIn('cardset_id', $cardsets)->get()
+            ->select('card_id')->whereIn('cardset_id', json_decode($cardsets))->get()
             ->pluck('card_id');
 
         

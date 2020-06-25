@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
         Round::truncate();
         DB::table('game_user')->truncate();
         DB::table('card_cardset')->truncate();
-        DB::table('game_cardset')->truncate();
 
         $usrQtty = 1000;
         $gmsQtty = 20;
