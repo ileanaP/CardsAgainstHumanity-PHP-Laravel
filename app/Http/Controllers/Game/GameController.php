@@ -8,6 +8,7 @@ use App\Game;
 use App\Card;
 use App\Round;
 use App\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Events\GameEnded;
@@ -31,11 +32,20 @@ class GameController extends ApiController
             'cardsets' => 'required'
         ];
 
-        $this->validate($request, $rules);
+        Validator::validate($request->all(), $rules);
 
+        $user = User::find($request['creator_id']);
+
+        if($user->in_game != null)
+            return $this->errorResponse('You are already in a game', 403);
+        
         $request['password'] = Hash::make($request['password']);
-
         $game = Game::create($request->all());
+        
+        $user->in_game = $game->id;
+        $user->save();
+
+        $game->users()->save($user);
 
         return $game;
     }
@@ -66,6 +76,9 @@ class GameController extends ApiController
         DB::table('user_round')->whereIn('round_id', $rounds)->delete();
 
         Round::where('game_id', $game->id)->delete();
+        
+        User::where('in_game', $game->id)->update(['in_game' => null]);
+        
         $game->delete();
 
         event(new GameEnded($game));
