@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Events\GameEnded;
+use App\Events\PingPlayersToConfirm;
 
 
 class GameController extends ApiController
@@ -86,8 +87,12 @@ class GameController extends ApiController
         return $this->showOne($game);
     }
 
-    public function test()
+    public function pingPlayersToConfirm($gameId)
     {
-        return "testy test";
+        $game = Game::find($gameId);
+
+        event(new PingPlayersToConfirm($game));
+
+        return 0;
     }
 }

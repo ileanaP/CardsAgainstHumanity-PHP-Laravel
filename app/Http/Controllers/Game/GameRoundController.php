@@ -8,6 +8,8 @@ use App\Game;
 use App\Round;
 use App\Card;
 use Illuminate\Support\Facades\DB;
+use App\Events\StartRound;
+use App\Events\RoundCards;
 
 class GameRoundController extends ApiController
 {
@@ -30,15 +32,19 @@ class GameRoundController extends ApiController
         if(count($round))
         {
             $round = $round[0];
+            
+            $userCards = DB::table('user_round')->where('round_id', $round->id)->get();
+
+            $roundCards = array();
+
+            foreach($userCards as $userCard)
+            {
+                $roundCards[$userCard->user_id] = json_decode($userCard->cards);
+            }
         }
         else
         {
             $cards = $this->fetchCards($game->id);
-
-            $cardss = DB::table('cardsets')->get()->pluck('id');
-
-
-            return $cardss;
 
             $round = $this->saveRound($game->id, $cards['black']);
 
@@ -75,6 +81,9 @@ class GameRoundController extends ApiController
                 );
             }
         }
+
+        event(new StartRound($game, $round));
+        event(new RoundCards($game, $roundCards));
 
         return $this->showOne($round);
     }

@@ -28,6 +28,7 @@ Route::resource('games.rounds', 'Game\GameRoundController', ['only' => ['index',
 Route::resource('games.users', 'Game\GameUserController', ['only' => ['index', 'show']]);
 Route::post('games/{gameId}/users/{userId}/remove', 'Game\GameUserController@remove');
 Route::post('games/{gameId}/users/{userId}/confirm', 'Game\GameUserController@confirm');
+Route::post('games/{gameId}/pingPlayersToConfirm', 'Game\GameController@pingPlayersToConfirm');
 
 Route::resource('users.rounds', 'User\UserRoundController', ['only' => ['index', 'show']]);
 
