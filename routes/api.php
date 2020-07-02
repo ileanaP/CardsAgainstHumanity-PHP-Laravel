@@ -34,7 +34,8 @@ Route::resource('users.rounds', 'User\UserRoundController', ['only' => ['index',
 
 Route::get('cards/{cardIds}', 'CardController@showCards');
 
-Route::resource('rounds', 'RoundController', ['only' => ['index', 'store', 'show', 'destroy']]);
+Route::resource('rounds', 'Round\RoundController', ['only' => ['index', 'store', 'show', 'destroy']]);
+Route::resource('rounds.users.cards', 'Round\RoundUserCardController', ['only' => ['store', 'index']]);
 Route::resource('cardsets', 'CardsetController', ['only' => ['index']]);
 
 Route::post('register', 'User\UserController@register');
