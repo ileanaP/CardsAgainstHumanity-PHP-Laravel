@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Game;
 use App\Round;
 use App\Card;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Events\StartRound;
 use App\Events\RoundCards;
@@ -46,9 +47,9 @@ class GameRoundController extends ApiController
         {
             $cards = $this->fetchCards($game->id);
 
-            $round = $this->saveRound($game->id, $cards['black']);
-
             $players = $this->getGamePlayers($game->id);
+
+            $round = $this->saveRound($game->id, $cards['black'], $players);
 
             $playersCount = count($players);
 
@@ -119,12 +120,13 @@ class GameRoundController extends ApiController
         return array('white' => $whiteCards->pluck('id'), 'black' => $blackCards->pluck('id'));
     }
 
-    public function saveRound($gameId, $cards)
+    public function saveRound($gameId, $cards, $players)
     {
         $round = new Round();
 
         $round->game_id = $gameId;
         $round->card_data = json_encode($cards);
+        $round->tsars = json_encode($players);
 
         $round->save();
 
@@ -132,7 +134,9 @@ class GameRoundController extends ApiController
     }
 
     public function getGamePlayers($gameId)
-    {
-        return DB::table('game_user')->where('game_id', '=', $gameId)->get()->pluck('user_id');
+    {        
+        $users = Game::find($gameId)->users()->get()->pluck('id');
+
+        return $users;
     }
 }

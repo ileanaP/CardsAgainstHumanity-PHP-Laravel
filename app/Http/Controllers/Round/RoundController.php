@@ -35,6 +35,7 @@ class RoundController extends ApiController
     public function destroy(Round $round)
     {
         DB::table('user_round')->where('round_id', $round->id)->delete();
+        DB::table('round_cards')->where('round_id', $round->id)->delete();
 
         $round->delete();
     }
