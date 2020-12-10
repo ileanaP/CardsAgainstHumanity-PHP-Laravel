@@ -46,7 +46,7 @@ class GameController extends ApiController
         $user->in_game = $game->id;
         $user->save();
 
-        $game->users()->save($user);
+        $game->users()->attach($user->id);
 
         return $game;
     }

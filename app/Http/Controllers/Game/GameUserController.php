@@ -49,7 +49,7 @@ class GameUserController extends ApiController
             $user->in_game = $game->id;
 
             $user->save();
-            $game->users()->save($user);
+            $game->users()->attach($user->id);
 
             $user->confirmed = DB::table('game_user')->where('user_id', $user->id)->get()
                                     ->pluck('confirmed')[0];

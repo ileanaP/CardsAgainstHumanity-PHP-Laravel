@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCardsetsToGame extends Migration
+class AddInProgressColumnToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class AddCardsetsToGame extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('game_cardset');
-
-
         Schema::table('games', function (Blueprint $table) {
-            $table->string('cardsets')->default(null)->nullable();
+            $table->smallInteger('inprogress')->default(0);
         });
     }
 
