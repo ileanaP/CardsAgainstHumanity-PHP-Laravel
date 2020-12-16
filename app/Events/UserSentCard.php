@@ -16,16 +16,18 @@ class UserSentCard implements ShouldBroadcastNow
 
     public $user;
     public $cards;
+    public $alreadySent;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $cards)
+    public function __construct($user, $cards, $alreadySent)
     {
-        $this->user = $user;
+        $this->user  = $user;
         $this->cards = $cards;
+        $this->alreadySent = $alreadySent;
     }
 
     /**
@@ -42,7 +44,8 @@ class UserSentCard implements ShouldBroadcastNow
     {
         return [
             'user_id' => $this->user->id,
-            'cards' => json_encode($this->cards)
+            'cards'   => json_encode($this->cards),
+            'alreadySent' => $this->alreadySent ? 1 : 0
         ];
     }
 }

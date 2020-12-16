@@ -29,7 +29,8 @@ Route::resource('games.users', 'Game\GameUserController', ['only' => ['index', '
 Route::post('games/{gameId}/users/{userId}/remove', 'Game\GameUserController@remove');
 Route::post('games/{gameId}/users/{userId}/confirm', 'Game\GameUserController@confirm');
 Route::post('games/{gameId}/pingPlayersToConfirm', 'Game\GameController@pingPlayersToConfirm');
-
+Route::get('games/{gameId}/tryGetCurrentRound', 'Game\GameRoundController@tryGetCurrentRound');
+Route::get('games/{roundId}/getUserWhiteCards', 'Game\GameRoundController@getUserWhiteCards');
 Route::resource('users.rounds', 'User\UserRoundController', ['only' => ['index', 'show']]);
 
 Route::get('cards/{cardIds}', 'CardController@showCards');

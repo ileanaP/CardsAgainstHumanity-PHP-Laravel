@@ -32,16 +32,8 @@ class GameRoundController extends ApiController
 
         if(count($round))
         {
-            $round = $round[0];
-            
-            $userCards = DB::table('user_round')->where('round_id', $round->id)->get();
-
-            $roundCards = array();
-
-            foreach($userCards as $userCard)
-            {
-                $roundCards[$userCard->user_id] = json_decode($userCard->cards);
-            }
+            $round = $round[0];            
+            $roundCards = $this->getUserWhiteCards($round->id);
         }
         else
         {
@@ -85,6 +77,41 @@ class GameRoundController extends ApiController
 
         event(new StartRound($game, $round));
         event(new RoundCards($game, $roundCards));
+
+        return $this->showOne($round);
+    }
+
+    public function getUserWhiteCards($roundId)
+    {
+        $userCards = DB::table('user_round')->where('round_id', $roundId)->get();
+
+        $roundCards = array();
+
+        foreach($userCards as $userCard)
+        {
+            $roundCards[$userCard->user_id] = json_decode($userCard->cards);
+        }
+
+        return $roundCards;
+    }
+
+    public function tryGetCurrentRound($gameId)
+    {
+        $game = Game::find($gameId);
+
+        if($game == NULL)
+        {
+            return NULL;
+        }
+
+        $round = $this->roundInProgress($game->id);
+
+        if(!count($round))
+        {
+            return NULL;
+        }
+
+        $round = $round[0];
 
         return $this->showOne($round);
     }
@@ -136,6 +163,8 @@ class GameRoundController extends ApiController
     public function getGamePlayers($gameId)
     {        
         $users = Game::find($gameId)->users()->get()->pluck('id');
+
+        $users = array_sort($users);
 
         return $users;
     }

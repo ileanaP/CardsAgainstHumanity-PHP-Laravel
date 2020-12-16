@@ -17,31 +17,42 @@ class RoundUserCardController extends ApiController
     public function store(Request $request, Round $round, User $user)
     {
         $cards = json_decode($request['cards']);
+        $currBlackCardNr = intval($request['currBlackCardNr']);
 
         //$cards = json_decode("[2411,703]");
         $cards = Card::whereIn('id', $cards)->get();
 
-        event(new UserSentCard($user, $cards));
+        $currCards = DB::table('round_cards')
+            ->where('user_id', $user->id)
+            ->where('round_id', $round->id)
+            ->get()
+            ->pluck('card_id')
+            ->all();
 
-        //print_r($request['cards']);
-        
+        $alreadySent = false;
+
+        if(count($currCards) > 0)
+        {
+            $cards = Card::whereIn('id', $currCards)->get();
+
+            $alreadySent = true;
+        }
+        else
+        {
+            foreach($cards as $card)
+            {
+                
+                DB::table('round_cards')
+                    ->insert(['user_id'       => $user->id,
+                              'round_id'      => $round->id,
+                              'card_id'       => $card->id,
+                              'currBlackCard' => $currBlackCardNr]);
+            }
+        }
+
+        event(new UserSentCard($user, $cards, $alreadySent));
+
         return 0;
-
-        // $cards = json_decode($request['cards']);
-
-        // foreach($cards as $card)
-        // {
-        //     DB::table('round_cards')
-        //         ->insert(['user_id' => $user->id,
-        //             'round_id' => $round->id,
-        //             'card_id' => $card]);
-        // }
-
-        // $cards = Card::whereIn('id', $cards)->get();
-
-        // event(new UserSentCard($user, $cards));
-
-        // return 0;
     }
 
     public function index(Round $round, User $user)
